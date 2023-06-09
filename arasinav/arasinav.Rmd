@@ -1,0 +1,74 @@
+---
+title: "Kadın Erkek Gelir Eşitsizliği üzerine Araştırma"
+author: 
+  - Haktan Erarslan[^1]
+bibliography: ../bibliography/biblio.bib
+csl: ../csl/apa-tr.csl
+header-includes:
+  - \usepackage{polyglossia}
+  - \setmainlanguage{turkish}
+  - \usepackage{booktabs}
+  - \usepackage{caption} 
+  - \captionsetup[table]{skip=10pt}
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    keep_tex: no
+    latex_engine: xelatex
+    number_sections: yes
+    toc: no
+geometry: margin=1in
+link-citations: yes
+urlcolor: blue
+fontsize: 12pt
+biblio-style: apalike
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+<!-- ======================================================================= -->
+<!-- ============================== NOTLAR ================================= -->
+<!-- ======================================================================= -->
+[^1]: 20080307, [Github Repo](https://github.com/HaktanErarslan/Arasinav)
+
+# Giriş
+
+Erkek egemen toplumda kadının kadın işgücünün önem kazanmasını Dünya Savaşları tetiklemiş ve artık emeğin kol gücünden ziyade zihinsel emeğe dönüşmesiyle erkek kadın işgücü arasındakı farklılaşma daha da azalmıştır. Aynı işi yapmalarına rağmencinsiyete göre ücret farklılaşması günümüzde dahi mevcuttur. 
+Araştırmada kullanılan veri [Github](https://github.com/)'dan [TidyTuesday](https://github.com/rfordatascience/tidytuesday) reposundan  alınmıştır. Veri 2022-2023 arasında belirli kurumlardan toplanmıştır ve bu zaman aralığını kapsıyor Veri 125 gözlem değerinden ve 17 değişkenden oluşuyor. *EmployerName* veri alınan şirket ismini, *Address* kurumun adresini,*DiffMeanHourlyPercent* ücretlerin cinsiyete göre ortalamalarındaki farkları(Rakamın eksi olması kadınların ortalamasının fazla olduğunu gösteriyor), *DiffMedianHourlyPercent* cinsiyetlere göre median değerler arasındaki farklılıkları, *DiffMeanBonusPercent* ve *DiffMedianBonusPercent* sırasıyla cinsiyetlere göre verilen bonusların ortalama ve mediana göre farklılıkları, *MaleBonusPercent* ve *FemaleBonusPercent* sırasıyla kurumda çalışan erkeklerin ve kadınların bonus alma yüzdesini,*MaleLowerQuartile*, *FemaleLowerQuartile*, *MaleLowerMiddleQuartile*, *FemaleLowerMiddleQuartile*, *MaleUpperMiddleQuartile*, *FemaleUpperMiddleQuartile*, *MaleTopQuartile* ve *FemaleTopQuartile* sırasınca 0-25, 25-50, 50-75 ve 75-100 yüzdeliklerinin kaçının erkek ve kadınlardan oluştuğunu gösteriyor ve son olarak *EmployerSize* kurumun büyüklüyüğünü gösteriyor.
+
+```{r include=FALSE}
+library(tinytex)
+library(tidyverse)
+library(readr)
+df <- read_csv("../data/ukgenderpay.csv")
+df <- subset(df, select = -c(DueDate, DateSubmitted,PostCode,CompanyNumber,SicCodes,SubmittedAfterTheDeadline,CompanyLinkToGPGInfo,CurrentName,EmployerId, PostCode,ResponsiblePerson))
+             
+nrow(df)
+ncol(df)
+
+
+
+```
+
+
+
+## Çalışmanın Amacı
+Bu çalışmada cinsiyetlere göre şirketlerde ücret konusunda farklılaşma olup olmadığını test edeceğim ve şirketin büyüklüğüne göre bir farkın olup olmadığına da bakacağım. Şirketlerin büyüklüklerine göre de ücret farklılıkları arasında nasıl dağıldığına regresyon analiziyle bakılacaktır. 
+\newpage
+
+## Literatür 
+Dünyadaki hemen hemen bütün ülkelerin ortak problemini oluşturan yoksulluğun temel sebebi kaynakların halk arasında adil dağıtılamaması anlamına gelen gelir eşitsizliği olgusudur. Gelir eşitsizliği ise en çok hakim ataerkil toplumsal cinsiyet rollerinin etkisi altında bırakılan, eğitim seviyesinin ve işgücüne katılımlarının düşük olduğu kadınları olumsuz etkilemektedir. Gelir dağılımı eşitsizliği kadınları yoksullaştırmakta, işgücüne katılımlarını düşürmektedir[@turgut].Araştırmada kullanılan verinin gelişmiş ülkeden toplanılması genel dünya ortalamasından yine de az olacaktır.
+Ancak ülkenin gelişmiş bir ülke olması kadınların işgücü piyasalarında ayrımcılıkla
+karşılaşmayacağı anlamına gelmemektedir. Her ülkede ayrımcılık farklı alanlarda ve
+şekillerde olabileceği gibi, her ülkede kadınların ve erkeklerin yaptıkları işler de farklılıklar
+göstermektedir[@ozkan].
+@furnh 294 kişi üzerinde yaptığı deneyde katılımcıların grupdaki diğer kişilerin ücretlerinin tahmin edilmesi istenmiştir. Çıkan sonuca göre genel olarak kişiler diğerlerinin ücretlerini reelden çok daha fazla tahmin etmişlerdir. Ancak cinsiyetler bazında bakıldığında önemli ölçüde erkekler için yapılan tahminlerin tahmincilerin cinsiyeti farketmeksizin daha yüksek olduğu görülmüştür. Yani toplumda erkeklerin daha yüksek ücret aldığı konusuda genel varsayım var. Ancak bu varsayım ve olağan durum yıllar bazında gerçekliğini yitirmektedir. 2018'de ortalama saatlik ücret farkının %17 olduğu görünüyor ancak bu oran 2002 yılında %32'ye eşitti ve yıllar bazında stabil düşüş göstermiştir. Ancak tam bitmesinin bir kaş yıl alacağı görünüyor[@jewell].
+
+
+\newpage
+# Kaynakça {#references}
+<div id="refs"></div>
+

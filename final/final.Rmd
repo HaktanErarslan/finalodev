@@ -1,0 +1,172 @@
+---
+title: "Kadın Erkek Gelir Eşitsizliği üzerine Araştırma"
+author: 
+  - Haktan Erarslan[^1]
+bibliography: ../bibliography/biblio.bib
+csl: ../csl/apa-tr.csl
+header-includes:
+  - \usepackage{polyglossia}
+  - \setmainlanguage{turkish}
+  - \usepackage{booktabs}
+  - \usepackage{caption} 
+  - \captionsetup[table]{skip=10pt}
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    keep_tex: no
+    latex_engine: xelatex
+    number_sections: yes
+    toc: no
+geometry: margin=1in
+link-citations: yes
+urlcolor: blue
+fontsize: 12pt
+biblio-style: apalike
+abstract: |
+  Geçmişten günümüze, kadınlar üretim sürecinin önemli bir parçası olmasına karşın çalışma hayatından dışlanmakta ve ayrımcı uygulamalarla karşılaşmaktadır. İşgücü piyasasında cinsiyete dayalı ayrımcılığın temelinde cinsiyete dayalı mesleki katmanlaşma yer almaktadır. Günümüzde de halen birçok toplumda, cinsiyete dayalı iş bölümü ya da toplumsal cinsiyet eşitsizliği nedeniyle kadınlara ve erkeklere farklı roller verilmektedir. Bu çalışmamızda İngilterede olan işletmelerden alınan verileri karşılaştırdığımızda şirket büyüklükleri açısından önemli farklılıklara rastlamadık, ancak yine de ortalamada ve medyan değerlerinde çoğu zaman erkekler öndeydi. Yüksek ücret düzeylerinde pek farklılık olmamasına rağmen aşağı çeyreklikte(0-25) kadınlar çoğunluk teşkil etmektedir. Şirket büyüklüğüne göre karşılaştırma yaptığımızda 1000-5000 ve 250-500 kişi arasında işçi çalıştıran şirketlerde yüksek ücret ödenen erkek çalışanların dağılımında fark olduğunu görüyoruz. Bonus yüzdeleri açısından önemli bir ayrımcılığının olmadığı kanaatine geldik. Nitekim, erkek ve kadın çalışanların bonus alma yüzdeleri arasında 0.92 gibi bir yüksek derecede anlamlı korelasyon katsayısının olduğunu görüyoruz. Yani bonusların kasıtlı olarak cinsiyetlere göre ayrımcılık yapılarak paylanma durumu yoktur veya toplamın azını kapsamaktadır.
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+<!-- ======================================================================= -->
+<!-- ============================== NOTLAR ================================= -->
+<!-- ======================================================================= -->
+[^1]: 20080307, [Github Repo](https://github.com/HaktanErarslan/finalodev.git)
+
+# Giriş
+
+Kadının çalışma hayatına girmesi başta eşin ve toplumun ondan beklediği sorumluluklarda bir değişikliğe yol açmamakta, dolayısıyla kadınların iş/aile dengesinin sağlanması sorunu ortaya çıkmaktadır. Bu nedenle kadınlar göz önünde olmayan, pasif ve niteliksiz pozisyonlarda ve “kadın işi” olarak adlandırılan işlerde çalışmayı tercih etmekte (cinsiyete dayalı yatay mesleki katmanlaşma) ya da işverenler tarafından bu pozisyonlara yönlendirmekte, bazen de işten çıkarılmakta ya da işi bırakmak zorunda kalmaktadır. Bu bağlamda, işgücü piyasasında dezavantajlı gruplar içinde yer alan kadınlara yönelik eşitsizlikler yalnızca işe alımda değil, terfi etmede (cam tavan), firma içi eğitim almada ve ücretlendirmede de ortaya çıkmaktadır. Bu durum işgücü piyasasında cinsiyete dayalı dikey katmanlaşma olarak ortaya çıkmaktadır. “Cinsiyete dayalı ücret farkı”, kadınların ücretli işgücüne katılmaya başladıkları günden beri tüm dünyada süregelen temel bir sorun alanıdır. Yüzyılı aşkın bir süredir çalışma yaşamında ayrımcılığın önlenmesi ve eşitliğin sağlanması için çalışan Uluslararası Çalışma Örgütü (ILO) için bu sorun her zaman önemli bir gündem maddesi oldu. Bu kapsamda, “eşit değerde işe eşit ücret”, 1951 yılında ILO Çalışma Konferansında, üye devletlerin ve işçi ve işveren örgütlerinin temsilcileri tarafından kabul edilerek, ILO’nun 100 sayılı Eşit Ücret Sözleşmesi ile bir çalışma standardı haline geldi. Erkek egemen toplumda kadının kadın işgücünün önem kazanmasını Dünya Savaşları tetiklemiş ve artık emeğin kol gücünden ziyade zihinsel emeğe dönüşmesiyle erkek kadın işgücü arasındakı farklılaşma daha da azalmıştır. Aynı işi yapmalarına rağmencinsiyete göre ücret farklılaşması günümüzde dahi mevcuttur. 
+Araştırmada kullanılan veri [Github](https://github.com/)'dan [TidyTuesday](https://github.com/rfordatascience/tidytuesday) reposundan  alınmıştır. Veri 2022-2023 arasında belirli kurumlardan toplanmıştır ve bu zaman aralığını kapsıyor Veri 125 gözlem değerinden ve 17 değişkenden oluşuyor. *EmployerName* veri alınan şirket ismini, *Address* kurumun adresini,*DiffMeanHourlyPercent* ücretlerin cinsiyete göre ortalamalarındaki farkları(Rakamın eksi olması kadınların ortalamasının fazla olduğunu gösteriyor), *DiffMedianHourlyPercent* cinsiyetlere göre median değerler arasındaki farklılıkları, *DiffMeanBonusPercent* ve *DiffMedianBonusPercent* sırasıyla cinsiyetlere göre verilen bonusların ortalama ve mediana göre farklılıkları, *MaleBonusPercent* ve *FemaleBonusPercent* sırasıyla kurumda çalışan erkeklerin ve kadınların bonus alma yüzdesini,*MaleLowerQuartile*, *FemaleLowerQuartile*, *MaleLowerMiddleQuartile*, *FemaleLowerMiddleQuartile*, *MaleUpperMiddleQuartile*, *FemaleUpperMiddleQuartile*, *MaleTopQuartile* ve *FemaleTopQuartile* sırasınca 0-25, 25-50, 50-75 ve 75-100 yüzdeliklerinin kaçının erkek ve kadınlardan oluştuğunu gösteriyor ve son olarak *EmployerSize* kurumun büyüklüyüğünü gösteriyor.
+
+
+
+
+
+## Çalışmanın Amacı
+Bu çalışmada cinsiyetlere göre şirketlerde ücret konusunda farklılaşma olup olmadığını test edeceğim ve şirketin büyüklüğüne göre bir farkın olup olmadığına da bakacağım. Şirketlerin büyüklüklerine göre de ücret farklılıkları arasında nasıl dağıldığına  bakılacaktır. Şirketlerde çalıştırılan eleman sayısına göre cinsiyet bakımından ücretlerde önemli farklar olup-olmadığına da bakılacaktır. Genelde bazı zamanlar şirketin yüksek karlı olduğu dönemlerde bir çok şirketde bonuslar dağıtılır. Bonus alma konusunda cinsiyete dayalı bir farklılaşmanın olup-olmadığı da incelenecektir. 
+\newpage
+
+## Literatür 
+Dünyadaki hemen hemen bütün ülkelerin ortak problemini oluşturan yoksulluğun temel sebebi kaynakların halk arasında adil dağıtılamaması anlamına gelen gelir eşitsizliği olgusudur. Gelir eşitsizliği ise en çok hakim ataerkil toplumsal cinsiyet rollerinin etkisi altında bırakılan, eğitim seviyesinin ve işgücüne katılımlarının düşük olduğu kadınları olumsuz etkilemektedir. Gelir dağılımı eşitsizliği kadınları yoksullaştırmakta, işgücüne katılımlarını düşürmektedir[@turgut].Araştırmada kullanılan verinin gelişmiş ülkeden toplanılması genel dünya ortalamasından yine de az olacaktır.
+Ancak ülkenin gelişmiş bir ülke olması kadınların işgücü piyasalarında ayrımcılıkla
+karşılaşmayacağı anlamına gelmemektedir. Her ülkede ayrımcılık farklı alanlarda ve
+şekillerde olabileceği gibi, her ülkede kadınların ve erkeklerin yaptıkları işler de farklılıklar
+göstermektedir[@ozkan].
+@furnh 294 kişi üzerinde yaptığı deneyde katılımcıların grupdaki diğer kişilerin ücretlerinin tahmin edilmesi istenmiştir. Çıkan sonuca göre genel olarak kişiler diğerlerinin ücretlerini reelden çok daha fazla tahmin etmişlerdir. Ancak cinsiyetler bazında bakıldığında önemli ölçüde erkekler için yapılan tahminlerin tahmincilerin cinsiyeti farketmeksizin daha yüksek olduğu görülmüştür. Yani toplumda erkeklerin daha yüksek ücret aldığı konusuda genel varsayım var. Ancak bu varsayım ve olağan durum yıllar bazında gerçekliğini yitirmektedir. 2018'de ortalama saatlik ücret farkının %17 olduğu görünüyor ancak bu oran 2002 yılında %32'ye eşitti ve yıllar bazında stabil düşüş göstermiştir. Ancak tam bitmesinin bir kaş yıl alacağı görünüyor[@jewell].
+
+# Veri 
+Tablo \ref{tab:ozet}'de erkek ve kadın çalışanların bonus ödenek alma durumlarına baktığımızda genel olarak belirgin farklılığın olmadığını görüyoruz. Ortalama yüzde 22'si bonus alıyorlar. Ancak medyan değerlerle ortalama arasında büyük fark olması da standart sapmanın yüksek olmasını açıklıyor. Bu bonus ödeneğin cinsiyet bazında değil de sadece bazı şirketler için gelenek olduğundan kaynaklanmaktadır. Aşağı çeyrekliklerde ortalama olarak kadın işçilerin fazla olduğunu görüyoruz. Yani düşük ücretle çalışan kadınlar erkek çalışanlardan daha fazladır. Medyan değerler de ortalamaya daha yakındır. Dağılım bonus oranına göre normaldir. Yüksek çeyreklikte olan işçilere baktığımızdaysa ise durum yine aşağı yüzdelikle aynı gibi görünüyor. Ancak burada cinsiyet açısında daha adil bir dağılım görüyoruz. Medyan değerlerine bakılırsa yüksek çeyrekliklerde ücret ödenen işçilerin cinsiyet bakımından yarı-yarıya olduğunu söyleye biliriz.
+
+
+
+
+
+```{r include=FALSE}
+library(tinytex)
+library(tidyverse)
+library(readr)
+df <- read_csv("../data/ukgenderpay.csv")
+df <- subset(df, select = -c(DueDate, DateSubmitted,PostCode,CompanyNumber,SicCodes,SubmittedAfterTheDeadline,CompanyLinkToGPGInfo,CurrentName,EmployerId, PostCode,ResponsiblePerson))
+             
+
+
+```
+
+
+```{r, echo=FALSE}
+library(xtable) 
+# devtools::install_github("emraher/summarytools")
+library(summarytools)
+st_options(lang = "tr")
+```
+
+
+
+```{r results='asis', echo=FALSE}
+df %>%
+  select("MaleBonusPercent", "FemaleBonusPercent", "MaleLowerQuartile", "FemaleLowerQuartile", "MaleTopQuartile", "FemaleTopQuartile") %>% 
+  descr(stats = c("mean", "sd", "min", "med", "max"), transpose = TRUE) %>% 
+  xtable(caption = "Özet İstatistikler",
+         label = "tab:ozet",
+         align = c("l", "c", "c", "c", "c", "c")) %>% 
+  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+```
+
+
+
+\newpage
+
+# Yöntem ve Veri Analizi
+Şekil \@ref(fig:plot)'e bakılırsa özet istatistikler tablosundaki bonuslarda standart sapmanın yüksek olmasını açıklaya biliriz. İki bonus yüzdeleri arasında 0.92 korelasyon katsayısı vardır. P değerinin küçüklüğüne bakılırsa bu katsayının anlamlı olduğunu anlarız. Bu katsayı iki değişken arasında yüksek bağlılık olduğunu söylüyor. Genel grafikte görünen bazı aykırı noktaların(Regresyon doğrusundan kenarda kalanlar) standart sapmanın yüksek olmasını açıklar niteliktedir.
+
+```{r plot, echo=FALSE, fig.align='center', fig.cap='Bonus Yüzdeleri arasında İlişki', fig.height=5, fig.width=6}
+
+library("ggpubr")
+ggscatter(df, x = "MaleBonusPercent", y = "FemaleBonusPercent", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Male Bonus Percent", ylab = "Female Bonus Percent",
+          color = "blue")
+```
+
+
+Şekil \@ref(fig:plotbox)'de genel olarak bir aykırı değer olmadığı görülüyor. En az işçi çalıştıran kategoride olan şirketlerde(250 kişiden az) medyan ve çeyrekliklerarası bakımından üst düzeyde ücret ödenen işçilerin erkeklere göre çoğunun kadın olduğunu görüyoruz. Ancak maksimum değerlere bakılırsa erkek çalışan ücreti öndedir.250 ile 500 kişi arasında olan şirketlerde en küçük şirketlerde olan durumun neredeyse tersi yaşanıyor diye biliriz. Bariz şekilde bu büyüklükteki firmalarda yüksek ücret alanların çoğunluğunu erkek çalışanlar kapsıyor. 500 ile 1000 arası işçi çalıştıran şirketlerde durum cinsiyetlere göre pek farklılaşmamaktadır, ancak maksimum değerlerde erkekler daha öndedir. Yani yüksek ücret alanların çoğunluğunun erkek olduğu şirketler vardır. Medyan değerine göre de erkek ücretleri çok olsa da büyük fark görünmüyor. 1000 ile 5000 kişi arasında işçi çalıştıran şirketlere bakılırsa diğer dördünden farklı olarak maksimum değerin kadın çalışanlarda olduğunu görürüz. Ayrıca kutunun yerine bakılırsa yani çeyrekliklerarasına düşen oranlara göre de kadınlar öndedir. İşçi sayısına göre en büyük şirketlerde de erkekler maksimumda öndedir. Çeyrekliklerarasına göre de önde olmasına rağmen medyan değeri bakımından kadın çalışanlardan geridedir.
+Örneklem ortalamalarına göre farklara baktığımızda tablo 2'de sadece 1000-5000 ve 250-500 kişi arasında işçi çalıştıran şirketlerde yüksek ücret alan erkekler yüzdesi bakımından önemli farklılıklar var. Diğer örneklemlerin dağılımları arasında ise önemli farklılıklar yoktur. P değerlerinin büyük olması sonucu anlamsız kılıyor.
+
+```{r plotbox, echo=FALSE, fig.align='center', fig.cap='Şirket Büyüklüğüne göre Ücret Farklılıkları', fig.height=6, fig.width=8}
+data <- df %>%
+
+  gather(Gender, Quartile, FemaleTopQuartile, MaleTopQuartile)
+
+ 
+
+ggplot(data, aes(x = EmployerSize, y = Quartile, fill = Gender)) +
+
+  geom_boxplot() +
+
+  labs(title = "Distribution of Top Quartile by Employer Size",
+
+       x = "Employer Size",
+
+       y = "Top Quartile") +
+
+  theme_minimal()
+```
+
+```{r results_table,echo = FALSE, results='asis'}
+library(rstatix)
+library(kableExtra)
+rx <- df %>% 
+  pairwise_t_test(MaleTopQuartile ~ EmployerSize, 
+                  pool.sd = FALSE,
+                  p.adjust.method = "bonferroni")
+rx_df <- as.data.frame(rx)
+dfx <-  select(rx_df, -n1, -n2, -p.adj.signif, -p.adj)
+
+xtable_obj <- xtable(dfx)
+
+attr(xtable_obj, "caption") <- "Şirket Büyüklüklüğe ve Ücret arasındaki İlişki"
+
+
+print(xtable_obj, caption.placement = "top", include.rownames = FALSE, comment = FALSE)
+```
+
+
+
+
+
+\newpage
+
+# Sonuç
+
+Özet istatistikler de genel olarak az ücretle çalışan işçilerin çoğunluğunun kadınlar teşkil ettiğini gördük, yukarı çeyrekliklerde belirli bir farka rastlamadık. Bonus alma konusunda ise cinsiyetler bazında pek bir farklılık bukunmuyor. Saçılım grafiğinde de gördüğümüz gibi erkek kadın bonus alma oranları arasında güçlü pozitif korelasyon vardır. Yani bir şirkette bonus iki cinsiyet için de aynı oranda paylanmaktadır. Şirkette çalışan eleman sayısına göre olan dağılımda ise sadece 1000-5000 ve 250-500 kişi çalıştıran şirketlerin ücret dağılımında önemli farklar olduğunu gördük.
+
+Çalışan maaşları ve aldıkları bonusları içeren bir veride daha iyi sonuçlar çıkaracağımız bir araştırma yapa bilirdik. Sektörel bazlı ücret farklılaşmasının daha önemli bir olgu olduğunu düşünüyorum. Dünyanın en gelişmiş ülkelerinde bile sektörlere göre çalışanları cinsiyet bakımından ayırıştıra biliyorlar. Bazı mesleklerde kadınların veya erkeklerin az istihdam edilmesi veya düşük ücretle işe alınmaları söz konusudur. Sektörel bazlı bir veri olması daha iyi sonuçlar alacağımız bir analize imkan tanırdı. Ayrıca verinin gelişmiş bir ülke olan İngiltereden alınması dünya ortalamasını yansıtmıyor. Daha az gelişmiş ve gelişmekte olan ülkelerde çok daha farklı sonuçlarla karşılaşa bilirdik. Bazı ülkelerde hala kadının istihdama katkısı çok düşük düzeydedir. Asıl ücret farklılıklarının bu ülkelerde olduğunu düşünüyorum.
+
+\newpage
+# Kaynakça {#references}
+<div id="refs"></div>
+
